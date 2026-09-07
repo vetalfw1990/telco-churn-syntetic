@@ -1,0 +1,130 @@
+# Remote MLflow stack for notebook 05, with Azurite instead of MinIO.
+#
+#   docker compose --env-file .env.azurite -f docker-compose.azurite.yml up -d
+#
+# Backend store : PostgreSQL
+# Artifact store: Azurite Blob (wasbs://) served through the MLflow server
+#                 (--serve-artifacts), so notebook clients need no Azure creds.
+
+volumes:
+  pgdata:
+  azurite-data:
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: mlflow-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    container_name: mlflow-azurite
+    environment:
+      # Custom account instead of the default devstoreaccount1.
+      AZURITE_ACCOUNTS: "${AZURE_ACCOUNT_NAME}:${AZURE_ACCOUNT_KEY}"
+    command:
+      - azurite-blob
+      - --blobHost
+      - "0.0.0.0"
+      - --blobPort
+      - "10000"
+      - --location
+      - /data
+      - --skipApiVersionCheck
+      - --loose
+    volumes:
+      - azurite-data:/data
+    ports:
+      - "10000:10000"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 10000 || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  create-container:
+    image: python:3.12-slim
+    container_name: mlflow-create-container
+    depends_on:
+      azurite:
+        condition: service_healthy
+    environment:
+      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
+      AZURE_CONTAINER: ${AZURE_CONTAINER}
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        pip install --no-cache-dir --quiet azure-storage-blob
+        python - <<'PY'
+        import os
+        from azure.storage.blob import BlobServiceClient
+        svc = BlobServiceClient.from_connection_string(
+            os.environ["AZURE_STORAGE_CONNECTION_STRING"]
+        )
+        name = os.environ["AZURE_CONTAINER"]
+        try:
+            svc.create_container(name)
+            print(f"container '{name}' created")
+        except Exception as exc:
+            print(f"container '{name}': {exc.__class__.__name__} (probably already exists)")
+        PY
+    restart: "no"
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:${MLFLOW_VERSION}
+    container_name: mlflow-server
+    depends_on:
+      postgres:
+        condition: service_healthy
+      azurite:
+        condition: service_healthy
+      create-container:
+        condition: service_completed_successfully
+    environment:
+      MLFLOW_BACKEND_STORE_URI: ${MLFLOW_BACKEND_STORE_URI}
+      MLFLOW_ARTIFACTS_DESTINATION: ${MLFLOW_ARTIFACTS_DESTINATION}
+      # The Azure SDK picks the Azurite endpoint out of this connection string.
+      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING}
+      MLFLOW_HOST: ${MLFLOW_HOST}
+      MLFLOW_PORT: ${MLFLOW_PORT}
+    command:
+      - /bin/bash
+      - -c
+      - |
+        pip install --no-cache-dir psycopg2-binary azure-storage-blob
+        mlflow server \
+          --backend-store-uri "${MLFLOW_BACKEND_STORE_URI}" \
+          --artifacts-destination "${MLFLOW_ARTIFACTS_DESTINATION}" \
+          --serve-artifacts \
+          --host "${MLFLOW_HOST}" \
+          --port "${MLFLOW_PORT}"
+    ports:
+      - "${MLFLOW_PORT}:${MLFLOW_PORT}"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:${MLFLOW_PORT}/health')",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+networks:
+  default:
+    name: mlflow-network
