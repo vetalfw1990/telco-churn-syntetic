@@ -1,0 +1,50 @@
+# syntax=docker/dockerfile:1
+
+# ---------------------------------------------------------------- builder ---
+FROM python:3.11-slim AS builder
+
+ENV PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /app
+
+# Інструменти збірки живуть лише тут і у фінальний образ не потрапляють.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Окремим шаром, щоб кеш залежностей не злітав від правки коду.
+COPY requirements-api.txt .
+RUN pip install --no-cache-dir -r requirements-api.txt
+
+# ---------------------------------------------------------------- runtime ---
+FROM python:3.11-slim AS runtime
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/opt/venv/bin:$PATH" \
+    MODEL_PATH=/app/models/churn_model.pkl
+
+WORKDIR /app
+
+# Єдине, що перетинає межу етапів.
+COPY --from=builder /opt/venv /opt/venv
+
+# models/ навмисно не копіюємо — він приїжджає bind mount'ом із compose.
+COPY src/ ./src/
+
+RUN useradd --create-home --uid 1000 appuser \
+    && mkdir -p /app/models /app/data \
+    && chown -R appuser:appuser /app
+USER appuser
+
+EXPOSE 8000
+
+# curl у python:3.11-slim немає, тому проба через інтерпретатор.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+    CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health').status == 200 else 1)"
+
+CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
