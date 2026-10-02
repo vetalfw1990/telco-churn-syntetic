@@ -1,0 +1,71 @@
+(.venv) PS C:\Users\vvfed\mlops-vm> python lab_scripts/lab2_hybrid_rrf.py
+C:\Users\vvfed\mlops-vm\ai-llmserver\homework\.venv\Lib\site-packages\qdrant_client\qdrant_remote.py:277: UserWarning: Failed to obtain server version. Unable to check client-server compatibility. Set check_compatibility=False to skip version check.
+  show_warning(
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████| 103/103 [00:00<00:00, 1222.69it/s]
+C:\Users\vvfed\mlops-vm\lab_scripts\common.py:104: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  dim = model.get_sentence_embedding_dimension()
+Документів у колекції: 8
+Модель ембедингів:     all-MiniLM-L6-v2
+
+════════════════════════════════════════════════════════════════════════
+  НАБІР 1 — запити англійською (мовою корпусу)
+════════════════════════════════════════════════════════════════════════
+  'my router stopped working how do I restart it' → dense rank=1, hybrid rank=1
+  'why is my connection so slow lately' → dense rank=1, hybrid rank=1
+  'I want gigabit speeds at home' → dense rank=1, hybrid rank=1
+  'leaving early do I owe a termination fee' → dense rank=1, hybrid rank=1
+  'can I add netflix to my package' → dense rank=1, hybrid rank=1
+  'what is the equipment rental charge on my invoice' → dense rank=1, hybrid rank=1
+  'update the card you charge every month' → dense rank=1, hybrid rank=1
+  'is anyone available to help on sunday night' → dense rank=1, hybrid rank=1
+
+  Category       | Dense Only | Hybrid (RRF)
+  Hit@1          | 1.00       | 1.00
+  Hit@3          | 1.00       | 1.00
+  MRR            | 1.00       | 1.00
+
+════════════════════════════════════════════════════════════════════════
+  НАБІР 2 — запити українською, поведінка як в оригіналі
+════════════════════════════════════════════════════════════════════════
+  'як скинути модем після збою' → dense rank=8, hybrid rank=4
+  'чому в мене повільний інтернет' → dense rank=3, hybrid rank=5
+  'хочу перейти на фібру гігабіт' → dense rank=1, hybrid rank=1
+  'як розірвати контракт без штрафу' → dense rank=6, hybrid rank=7
+  'додати netflix до пакету послуг' → dense rank=1, hybrid rank=1
+
+  Category       | Dense Only | Hybrid (RRF)
+  Hit@1          | 0.40       | 0.40
+  Hit@3          | 0.60       | 0.40
+  MRR            | 0.53       | 0.52
+
+════════════════════════════════════════════════════════════════════════
+  НАБІР 3 — ті самі запити, але порожній BM25 відкидається
+════════════════════════════════════════════════════════════════════════
+  'як скинути модем після збою' → dense rank=8, hybrid rank=8  (BM25 мовчить)
+  'чому в мене повільний інтернет' → dense rank=3, hybrid rank=3  (BM25 мовчить)
+  'хочу перейти на фібру гігабіт' → dense rank=1, hybrid rank=1  (BM25 мовчить)
+  'як розірвати контракт без штрафу' → dense rank=6, hybrid rank=6  (BM25 мовчить)
+  'додати netflix до пакету послуг' → dense rank=1, hybrid rank=1
+
+  Category       | Dense Only | Hybrid (RRF)
+  Hit@1          | 0.40       | 0.40
+  Hit@3          | 0.60       | 0.60
+  MRR            | 0.53       | 0.53
+
+════════════════════════════════════════════════════════════════════════
+  ПІДСУМОК
+════════════════════════════════════════════════════════════════════════
+  набір                                           MRR dense  MRR hybrid
+  НАБІР 1 — запити англійською (мовою корпусу)         1.00        1.00
+  НАБІР 2 — запити українською, поведінка як в         0.53        0.52
+  НАБІР 3 — ті самі запити, але порожній BM25          0.53        0.53
+
+  Запитів без BM25-сигналу у наборі 3: 4 з 5
+  Приріст MRR від «гібрида» на українських запитах:
+     як в оригіналі:            -0.01
+     без фіктивного sparse:     +0.00
+
+  Різниця між цими двома числами і є мірою того, наскільки
+  оригінальна таблиця завищувала користь гібридного пошуку.
