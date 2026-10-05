@@ -1,0 +1,108 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram id="mcp-arch" name="MCP — AI-асистент команди розробки">
+    <mxGraphModel dx="2194" dy="1294" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=left;verticalAlign=top;fontSize=18;" value="&lt;b&gt;MCP: AI-асистент команди розробки&lt;/b&gt;&lt;br&gt;&lt;font style=&#39;font-size:11px&#39;&gt;Host запускає по одному Client на кожен Server. Транспорт обирається за тим, ДЕ сервер виконується.&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="800" x="40" y="24" as="geometry" />
+        </mxCell>
+        <mxCell id="host" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#f4f8f7;strokeColor=#9ab3ae;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontSize=13;fontStyle=1;" value="HOST — IDE / чат-застосунок" vertex="1">
+          <mxGeometry height="330" width="320" x="40" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="llm" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eef4f2;strokeColor=#c3d5d1;fontSize=11;align=left;spacingLeft=10;" value="LLM&lt;br&gt;&lt;font style=&#39;font-size:11px;color:#5b6a68&#39;&gt;вирішує, який інструмент покликати&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="280" x="60" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="lbl" parent="1" style="text;html=1;align=left;fontSize=10;fontColor=#5b6a68;" value="MCP Clients — по одному на кожен сервер, 1:1" vertex="1">
+          <mxGeometry height="20" width="280" x="60" y="198" as="geometry" />
+        </mxCell>
+        <mxCell id="ca" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c3d5d1;fontSize=12;" value="Client A  →  GitHub" vertex="1">
+          <mxGeometry height="36" width="280" x="60" y="222" as="geometry" />
+        </mxCell>
+        <mxCell id="cb" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c3d5d1;fontSize=12;" value="Client B  →  Jira" vertex="1">
+          <mxGeometry height="36" width="280" x="60" y="266" as="geometry" />
+        </mxCell>
+        <mxCell id="cc" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c3d5d1;fontSize=12;" value="Client C  →  Slack" vertex="1">
+          <mxGeometry height="36" width="280" x="60" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="cd" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c3d5d1;fontSize=12;" value="Client D  →  Codebase" vertex="1">
+          <mxGeometry height="36" width="280" x="60" y="354" as="geometry" />
+        </mxCell>
+        <mxCell id="sg" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9ab3ae;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontSize=12;" value="&lt;b&gt;MCP Server · GitHub&lt;/b&gt;&lt;br&gt;&lt;font style=&#39;font-size:11px;color:#5b6a68&#39;&gt;віддалений SaaS, читання issues&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;Tools:&lt;/b&gt; search_issues, get_issue&lt;br&gt;&lt;b&gt;Resources:&lt;/b&gt; issue://{repo}/{id}&lt;br&gt;&lt;b&gt;Prompts:&lt;/b&gt; triage_issue" vertex="1">
+          <mxGeometry height="120" width="310" x="620" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="sj" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9ab3ae;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontSize=12;" value="&lt;b&gt;MCP Server · Jira&lt;/b&gt;&lt;br&gt;&lt;font style=&#39;font-size:11px;color:#5b6a68&#39;&gt;віддалений SaaS, створення тікетів&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;Tools:&lt;/b&gt; create_ticket, update_status&lt;br&gt;&lt;b&gt;Prompts:&lt;/b&gt; bug_template&lt;br&gt;&lt;font style=&#39;font-size:10px;color:#b4540a&#39;&gt;дія зі світом → потрібна ідемпотентність&lt;/font&gt;" vertex="1">
+          <mxGeometry height="120" width="310" x="620" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="ss" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9ab3ae;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontSize=12;" value="&lt;b&gt;MCP Server · Slack&lt;/b&gt;&lt;br&gt;&lt;font style=&#39;font-size:11px;color:#5b6a68&#39;&gt;віддалений SaaS, надсилання повідомлень&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;Tools:&lt;/b&gt; send_message&lt;br&gt;&lt;font style=&#39;font-size:10px;color:#b4540a&#39;&gt;незворотна дія → підтвердження людини&lt;/font&gt;" vertex="1">
+          <mxGeometry height="120" width="310" x="620" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="sf" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#fff8f1;strokeColor=#b4540a;strokeWidth=2;align=left;verticalAlign=top;spacingLeft=10;spacingTop=6;fontSize=12;" value="&lt;b&gt;MCP Server · Local codebase&lt;/b&gt;&lt;br&gt;&lt;font style=&#39;font-size:11px;color:#5b6a68&#39;&gt;локальний процес на тій самій машині&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;Tools:&lt;/b&gt; read_file, list_directory&lt;br&gt;&lt;b&gt;Resources:&lt;/b&gt; file:///{path}" vertex="1">
+          <mxGeometry height="120" width="310" x="620" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="bg" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eef4f2;strokeColor=#c3d5d1;fontSize=11;align=left;spacingLeft=10;" value="GitHub REST API&lt;br&gt;&lt;font style=&#39;font-size:10px;color:#5b6a68&#39;&gt;OAuth, TLS&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="1010" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="bj" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eef4f2;strokeColor=#c3d5d1;fontSize=11;align=left;spacingLeft=10;" value="Jira Cloud API&lt;br&gt;&lt;font style=&#39;font-size:10px;color:#5b6a68&#39;&gt;OAuth, TLS&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="1010" y="285" as="geometry" />
+        </mxCell>
+        <mxCell id="bs" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eef4f2;strokeColor=#c3d5d1;fontSize=11;align=left;spacingLeft=10;" value="Slack Web API&lt;br&gt;&lt;font style=&#39;font-size:10px;color:#5b6a68&#39;&gt;OAuth, TLS&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="1010" y="425" as="geometry" />
+        </mxCell>
+        <mxCell id="bf" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#fff8f1;strokeColor=#e0b48a;fontSize=11;align=left;spacingLeft=10;" value="Файлова система&lt;br&gt;&lt;font style=&#39;font-size:10px;color:#5b6a68&#39;&gt;права ОС&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="1010" y="595" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="ca" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5b6a68;fontSize=11;fontStyle=1;endArrow=block;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;" target="sg" value="HTTP + SSE">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="240" />
+              <mxPoint x="480" y="170" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="cb" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5b6a68;fontSize=11;fontStyle=1;endArrow=block;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;" target="sj" value="HTTP + SSE">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="284" />
+              <mxPoint x="520" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="cc" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5b6a68;fontSize=11;fontStyle=1;endArrow=block;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;" target="ss" value="HTTP + SSE">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="560" y="328" />
+              <mxPoint x="560" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="cd" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#b4540a;strokeWidth=2;fontSize=11;fontStyle=1;endArrow=block;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;" target="sf" value="stdio&amp;#10;дочірній процес">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="430" y="372" />
+              <mxPoint x="430" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="sg" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#9ab3ae;dashed=1;fontSize=10;endArrow=block;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="bg" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="sj" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#9ab3ae;dashed=1;fontSize=10;endArrow=block;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="bj" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="ss" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#9ab3ae;dashed=1;fontSize=10;endArrow=block;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="bs" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="sf" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#9ab3ae;dashed=1;fontSize=10;endArrow=block;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="bf" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="note" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c3d5d1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontSize=11;" value="&lt;b&gt;Чому саме такий транспорт&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b style=&#39;color:#b4540a&#39;&gt;stdio — локальний сервер (codebase)&lt;/b&gt;&lt;br&gt;Host сам запускає процес і спілкується через його stdin/stdout.&lt;br&gt;Немає порту — немає чого атакувати по мережі.&lt;br&gt;Немає окремої автентифікації: доступ обмежують права ОС.&lt;br&gt;Життя сервера прив&#39;язане до Host: закрили IDE — процес помер.&lt;br&gt;&lt;br&gt;&lt;b style=&#39;color:#5b6a68&#39;&gt;HTTP + SSE — віддалені сервери&lt;/b&gt;&lt;br&gt;Сервер живе на іншій машині, тож stdio неможливий у принципі.&lt;br&gt;Потрібні TLS і OAuth: токени SaaS не можна передавати відкрито.&lt;br&gt;Один сервер обслуговує багато Host-ів і живе незалежно від них.&lt;br&gt;SSE потрібен для подій від сервера до клієнта — сам HTTP-запит&lt;br&gt;односторонній і не вміє штовхати оновлення." vertex="1">
+          <mxGeometry height="230" width="500" x="40" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="prim" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c3d5d1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontSize=11;" value="&lt;b&gt;Примітиви — різниця в тому, ХТО ініціює&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;Tools&lt;/b&gt; — ініціює модель. Дія, яку вона вирішує виконати.&lt;br&gt;&lt;b&gt;Resources&lt;/b&gt; — ініціює застосунок. Дані за URI в контекст.&lt;br&gt;&lt;b&gt;Prompts&lt;/b&gt; — ініціює користувач. Готовий шаблон взаємодії." vertex="1">
+          <mxGeometry height="110" width="500" x="620" y="700" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
